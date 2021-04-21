@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<style>
+		#root{
+			width: 100px;height: 30px;background-color: lightblue;text-align: center;cursor: pointer
+		}
+	</style>
+</head>
+<body>
+	<div id="root"></div>
+	<script>
+		const generatefn = function () {
+          console.log(this,1)
+		  let that = this
+		  return function () {
+            console.log(this,2)
+            console.log(that,3)
+			setTimeout(function () {
+              console.log(this,4)
+            })
+            setTimeout(()=> {
+              console.log(this,5)
+            })
+          }
+        }
+        let fn = generatefn()
+        document.getElementById('root').addEventListener('click',fn)
+	</script>
+
+
+
+</body>
+</html>
