@@ -1,13 +1,15 @@
 {
-    "name": "code_practice",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-      "test": "jest"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC"
+  "name": "code_practice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "^4.17.21"
   }
-  
+}
