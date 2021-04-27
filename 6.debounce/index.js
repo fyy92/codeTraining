@@ -1,35 +1,22 @@
 /**
  * 防抖 延迟执行   适用：搜索框 输入框
+ //这里做了简化，写的默认options.leading=false options.trailing=true的版本
  */
 
-let debounce = function(fn,delay=100){
-    let t
+
+let debounce = function(fn,delay){
+    let timer,res
     return (...args)=>{
-        if(!t){
             // fn绑定的是这里的this
-            t = setTimeout(()=>{
-                fn(...args)
-                clearTimeout(t)
+            clearTimeout(timer)
+            timer = setTimeout(()=>{
+                res = fn(...args)
             },delay)
-        }
+        return res
     }
     
 }
-const fn = val=>val
-const d_fn = debounce(fn,32)
-d_fn('a');
-
-setTimeout(function() {
-    console.log(1,d_fn('b'));
-}, 64);
-
-setTimeout(function() {
-    console.log(1,d_fn('c'));
-}, 128);
-
-
-
-
+// let debounce = require('lodash').debounce
 module.exports = {
     debounce
 }

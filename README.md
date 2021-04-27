@@ -18,3 +18,5 @@ npm run test  跑所有测试
 - 3. new原理
 - 4. instanceof原来
 - 5. 深克隆
+- 6. 防抖
+- 7. 节流

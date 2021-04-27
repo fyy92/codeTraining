@@ -1,28 +1,24 @@
 const {debounce} = require('./index')
 
-const fn = jest.fn(function(){
-    return this
-});
-const d_fn = debounce(fn)
+test('debounce',done=>{
+    const fn = jest.fn(val=>val)
+    const debounced_fn = debounce(fn,16)
+    
+    var results = [debounced_fn('a'), debounced_fn('b'), debounced_fn('c')];
+    // 测试异步执行
+    expect(fn.mock.calls.length).toBe(0)
+    expect(results).toEqual([undefined,undefined,undefined])
+    setTimeout(()=>{
+        // 测试防抖(单位时间多次执行只执行最后一次)
+        expect(fn.mock.calls.length).toBe(1)
+        results = [debounced_fn('d'), debounced_fn('e'), debounced_fn('f')];
 
-
-
-describe('debounce', function() {
-    it('不断延迟执行',done=>{
-        const fn = jest.fn()
-        fn()
-        fn()
-        fn()
-        // var obj = {name:'张三'}
-        // d_fn.call(obj,'a')
-        // d_fn.call(obj,'b')
-        // 1 延迟执行
-        setTimeout(()=>{
-            expect(fn.mock.calls.length).toBe(1)
-            // 
-            // expect(fn.mock.calls[0][0]).toBe('a')
-            // expect(fn.mock.results[0]).toEqual(obj)
-            done()
-        },1000)
-    })
+    },32)
+    setTimeout(()=>{
+        expect(fn.mock.calls.length).toBe(2)
+        // 测试返回值及参数
+        expect(results).toEqual(['c','c','c'])
+        done()
+    },64)
 })
+
