@@ -17,5 +17,16 @@ test('curry',()=>{
     expect(curry_add(1,2,1)).toBe(4)
 })
 
+test('curry_prop',()=>{
+    const prop = curry(function (key, obj) {
+        return obj[key]
+    });
+    const personList = [{name: 'kevin'}, {name: 'daisy'}]
+    const fn = prop('name')
+    //这里不能简写 否则参数个数不对
+    expect(personList.map(item=>fn(item))).toEqual(['kevin','daisy'])
+   
+})
+
 
 
