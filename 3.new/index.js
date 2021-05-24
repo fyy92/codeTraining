@@ -1,5 +1,5 @@
 const _new = (fn,args)=>{
-    // const o1 = Object.create(fn.prototype)
+    // const o1 = Object.create(fn.prototype)      创建一个新对象继承fn
     // const o1 = _create(fn.prototype) // 由于这里crete还是用到了new 所以也不是很严谨
     let o1 = {}
     o1.__proto__ = fn.prototype
