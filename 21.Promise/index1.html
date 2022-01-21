@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .wrap{
+            display: flex;
+        }
+        .left{
+            width: 400px;
+        }
+        .right{
+            flex:1
+        }
+        .boxwrap{
+            display: flex;
+        }
+        .box{
+            width:20px;
+            height: 20px;
+            background-color: blueviolet;
+            border: 2px solid black;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="left" >
+            <ul id="app"><h2>请求：</h2>
+    
+            </ul>
+        </div>
+        <div class="right"> 
+            <h2>Promise队列：</h2>
+            <div class="boxwrap"></div>
+        </div>
+    </div>
+    
+    
+<script>
+    //-------------------封装的渲染方法----------------------
+    const input = new Array(10).fill('http://localhost:3000/').map((item,index)=>`${item}${index+1}`)
+    console.log(input);
+    const app = document.querySelector('#app')
+
+    const render = (queue)=>{
+        const boxwrap = document.getElementsByClassName('boxwrap')[0]
+        boxwrap.innerHTML = ''
+        for(var i = 0;i<queue.length;i++){
+            const childbox = document.createElement('div')
+            childbox.className = 'box'
+            boxwrap.appendChild(childbox)
+        }
+        
+    }
+
+
+    const addReactive = (requestsQueue)=>{
+        const orginPrototype = Array.prototype
+        const changeMethod = ['push','splice']
+        changeMethod.forEach(key=>{
+            requestsQueue[key] = function(...args){
+                // console.log('reactive render',this===requestsQueue);
+                orginPrototype[key].call(this,...args)
+                render(this)
+            }
+        })
+    }
+    const addEl = (text,isError=false)=>{
+        const child = document.createElement('li')
+        if(isError) child.style.color = 'red'
+        child.innerText = text
+        app.appendChild(child)  //这里
+    }
+    //-------------------封装的渲染方法----------------------
+   //-------------------控制并发----------------------
+
+
+
+
+
+
+    function handleFetchQueue(input, max) {
+        const requestsQueue = []; // 请求队列
+        addReactive(requestsQueue) //对requestsQueue添加响应式i
+        let i = 0;
+        const req = (i)=>{  //产生一个promise请求 成功则删除队里中promise 再添加一个请求
+            return  fetch(input[i]).then(async(res)=>{
+                if(res.status===500){
+                    const text = await res.text()
+                    throw new Error(text);
+                }else{
+                    return res.text()
+                }
+            }).then(res=>addEl(res),error=>addEl(error,true)).finally(()=>{
+                const index = requestsQueue.findIndex(item=>item===req)
+                requestsQueue.splice(index,1)
+                checkAddReq()
+            })
+        }
+        const checkAddReq = ()=>{
+            if(i>=input.length) return // 请求数不能越界
+            if(requestsQueue.length+1 <= max) { // 并发不能越界
+                setTimeout(()=>{ //加延迟为了提高动画效果，实际不需要
+                    requestsQueue.push(req(i++))
+                    checkAddReq()
+                },50)
+                
+            }
+        }   
+       checkAddReq();
+    }   
+
+    handleFetchQueue(input,3)
+      //-------------------控制并发----------------------
+</script>
+</body>
+</html>
